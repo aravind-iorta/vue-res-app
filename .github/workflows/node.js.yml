@@ -30,5 +30,8 @@ jobs:
     - run: npm install -g serve
     - run: npm run build --if-present
     - run: cd dist
-    - run: npm run start
+    - run: npm run start &
+  deploy:
+    runs-on: ubuntu-latest
+
     
