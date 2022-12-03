@@ -31,4 +31,4 @@ jobs:
     - run: npm run build --if-present
     - run: cd dist
     - run: serve -p 3001 &
-    - run: disown
+    
