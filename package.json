@@ -6,7 +6,7 @@
     "build": "vite build",
     "dev": "vite --port 3001",
     "preview": "vite preview --port 3001",
-    "start": "concurrently \"json-server src/assets/db/db.json  --static . \" \"vite --port 3001  \"   "
+    "start": "vite --port 3001"
   },
   "dependencies": {
     "axios": "^1.2.0",
