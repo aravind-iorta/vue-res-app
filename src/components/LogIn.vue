@@ -37,6 +37,7 @@
 
 <script>
 import axios from "axios";
+import { API_URL } from "../config/constant";
 export default {
   name: "LogIn",
   data() {
@@ -52,21 +53,17 @@ export default {
   },
   methods: {
     logIn() {
-      axios
-        .get(
-          `http://localhost:3000/users?email=${this.login.email}&password=${this.login.password}`
-        )
-        .then((e) => {
-          if (e.status === 200 && e.data.length > 0) {
-            this.snackbar = true;
-            const user = JSON.stringify(e.data[0]);
-            localStorage.setItem("userInfo", user);
+      axios.post(`${API_URL}/user/login`, { ...this.login }).then((e) => {
+        if (e.status === 200) {
+          this.snackbar = true;
+          const user = JSON.stringify(e.data.data);
+          localStorage.setItem("userInfo", user);
 
-            this.$router.push({ name: "Home" });
-          } else {
-            alert("Email and Password is in-correct");
-          }
-        });
+          this.$router.push({ name: "Home" });
+        } else {
+          alert("Email and Password is in-correct");
+        }
+      });
     },
   },
   mounted() {

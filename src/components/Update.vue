@@ -36,6 +36,7 @@
 <script>
 import axios from "axios";
 import Header from "./Header.vue";
+import { API_URL } from "../config/constant";
 export default {
   name: "Update",
   components: {
@@ -54,7 +55,7 @@ export default {
     update() {
       let id = this.$route.params.id;
       axios
-        .put(`http://localhost:3000/restaurants/${id}`, this.updateRestaurant)
+        .put(`${API_URL}/restaurants/${id}`, this.updateRestaurant)
         .then((e) => {
           if (e.status === 200) {
             // alert("update");
@@ -73,7 +74,7 @@ export default {
   },
   mounted() {
     let id = this.$route.params.id;
-    axios.get(`http://localhost:3000/restaurants/${id}`).then((e) => {
+    axios.get(`${API_URL}/restaurants/${id}`).then((e) => {
       if (e.status === 200) {
         this.updateRestaurant = e.data;
       }

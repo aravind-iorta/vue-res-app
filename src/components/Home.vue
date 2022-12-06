@@ -1,6 +1,6 @@
 <template>
   <Header />
-  <h2>Hello {{ name }} , Welcome on Home Page</h2>
+  <h2>Hello {{ userInfo.name }} , Welcome on Home Page</h2>
   <v-text-field
     :loading="loading"
     density="compact"
@@ -11,6 +11,7 @@
     @change="onClick"
     class="search"
   ></v-text-field>
+
   <v-container class="bg-surface-variant">
     <v-row no-gutters>
       <v-col v-for="item in restaurants" :key="item.id">
@@ -52,9 +53,9 @@
               </v-card-text>
               <v-card-actions>
                 <v-btn color="gray" variant="plain">
-                  <router-link :to="'/update/' + item.id">Edit</router-link>
+                  <router-link :to="'/update/' + item._id">Edit</router-link>
                 </v-btn>
-                <v-btn color="red" variant="plain" @click="onDelete(item.id)">
+                <v-btn color="red" variant="plain" @click="onDelete(item._id)">
                   Delete
                 </v-btn>
               </v-card-actions>
@@ -64,17 +65,25 @@
       </v-col>
     </v-row>
   </v-container>
+  <v-pagination
+    v-model="page"
+    :length="restaurantsCount"
+    circle
+    @click="fetchRestaurants(search)"
+  ></v-pagination>
 </template>
 
 <script>
 import axios from "axios";
 import Header from "./Header.vue";
+import { API_URL } from "../config/constant";
 export default {
   name: "Home",
   data() {
     return {
-      name: "",
+      userInfo: {},
       restaurants: [],
+      restaurantsCount: 0,
       loading: false,
       selection: 1,
       loading: false,
@@ -87,7 +96,7 @@ export default {
   },
   methods: {
     onDelete(id) {
-      axios.delete(`http://localhost:3000/restaurants/${id}`).then((e) => {
+      axios.delete(`${API_URL}/restaurants/${id}`).then((e) => {
         if (e.status === 200) {
           this.fetchRestaurants();
         }
@@ -99,17 +108,21 @@ export default {
       setTimeout(() => (this.loading = false), 2000);
     },
     fetchRestaurants(search) {
-      let val = search ? `?name_like=${search}` : "";
-      axios.get(`http://localhost:3000/restaurants/${val}`).then((e) => {
-        if (e.status === 200) {
-          this.restaurants = e.data;
-          this.loading = false;
-          this.loaded = true;
-        }
-      });
+      let val = search ? `&name=${search}` : "";
+      axios
+        .get(
+          `${API_URL}/restaurants/all/${this.userInfo._id}?page=${this.page}&perPage=4${val}`
+        )
+        .then((e) => {
+          if (e.status === 200) {
+            this.restaurants = e.data.data;
+            this.restaurantsCount = e.data.totalPages;
+            this.loading = false;
+            this.loaded = true;
+          }
+        });
     },
     onClick(event) {
-      console.log(event);
       this.loading = true;
       this.fetchRestaurants(this.search);
     },
@@ -120,7 +133,8 @@ export default {
     if (!user) {
       this.$router.push({ name: "LogIn" });
     }
-    this.name = JSON.parse(user)?.name;
+    // this.name = JSON.parse(user)?.name;
+    this.userInfo = JSON.parse(user);
     this.fetchRestaurants(null);
   },
 };

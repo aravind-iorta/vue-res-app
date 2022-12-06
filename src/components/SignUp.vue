@@ -31,6 +31,7 @@
 
 <script>
 import axios from "axios";
+import { API_URL } from "../config/constant";
 export default {
   name: "SignUp",
   data() {
@@ -44,7 +45,7 @@ export default {
   },
   methods: {
     signUp() {
-      axios.post("http://localhost:3000/users", this.register).then((e) => {
+      axios.post(`${API_URL}/user/register`, this.register).then((e) => {
         if (e.status === 201) {
           //   alert("signup is successfully");
 

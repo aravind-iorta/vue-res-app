@@ -42,6 +42,7 @@
 <script>
 import axios from "axios";
 import Header from "./Header.vue";
+import { API_URL } from "../config/constant";
 export default {
   name: "Add",
   components: {
@@ -61,6 +62,7 @@ export default {
           value.size < 1000000 ||
           "picture size should be less than 1 MB!",
       ],
+      userInfo: {},
     };
   },
   methods: {
@@ -79,7 +81,9 @@ export default {
 
     add() {
       axios
-        .post("http://localhost:3000/restaurants", { ...this.addRestaurant })
+        .post(`${API_URL}/restaurants/${this.userInfo?._id}`, {
+          ...this.addRestaurant,
+        })
         .then((e) => {
           if (e.status === 201) {
             // alert("added");
@@ -96,6 +100,14 @@ export default {
           }
         });
     },
+  },
+  mounted() {
+    let user = localStorage.getItem("userInfo");
+
+    if (!user) {
+      this.$router.push({ name: "LogIn" });
+    }
+    this.userInfo = JSON.parse(user);
   },
 };
 </script>
